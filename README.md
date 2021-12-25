@@ -22,13 +22,22 @@ Simple WebSocket echo server.
 - The `MAX_MESSAGE_SIZE` environment variable specifies the maximum allowed
   message size in bytes. The default value is `65536`.
 
-## Running the server
+## Running the server locally
 
 ```
 git clone https://github.com/websockets/websocket-echo-server.git
 cd websocket-echo-server
-npm ci
+npm ci --production
 node index.js
+```
+
+## Running the server in a Docker container
+
+```
+git clone https://github.com/websockets/websocket-echo-server.git
+cd websocket-echo-server
+docker build -t websocket-echo-server .
+docker run -e BIND_PORT=8080 --expose 8080 -d -p 8080:8080 websocket-echo-server
 ```
 
 ## License
