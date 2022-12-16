@@ -1,6 +1,6 @@
 # websocket-echo-server
 
-[![CI](https://img.shields.io/github/workflow/status/websockets/websocket-echo-server/CI/master?label=CI&logo=github)](https://github.com/websockets/websocket-echo-server/actions?query=workflow%3ACI+branch%3Amaster)
+[![CI](https://img.shields.io/github/actions/workflow/status/websockets/websocket-echo-server/ci.yml?branch=master&label=CI&logo=github)](https://github.com/websockets/websocket-echo-server/actions?query=workflow%3ACI+branch%3Amaster)
 [![Coverage Status](https://img.shields.io/coveralls/websockets/websocket-echo-server/master.svg?logo=coveralls)](https://coveralls.io/github/websockets/websocket-echo-server)
 
 Simple WebSocket echo server.
