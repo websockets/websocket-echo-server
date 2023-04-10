@@ -11,18 +11,18 @@
   "author": "Luigi Pinca",
   "license": "MIT",
   "dependencies": {
-    "ws": "^8.11.0"
+    "ws": "^8.13.0"
   },
   "devDependencies": {
-    "eslint": "^8.28.0",
-    "eslint-config-prettier": "^8.3.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "mocha": "^10.1.0",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "prettier": "^2.8.0"
+    "prettier": "^2.8.7"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.7",
-    "utf-8-validate": "^5.0.10"
+    "utf-8-validate": "^6.0.3"
   }
 }
