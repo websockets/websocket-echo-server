@@ -11,7 +11,7 @@
   "author": "Luigi Pinca",
   "license": "MIT",
   "dependencies": {
-    "ws": "^8.16.0"
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
