@@ -14,7 +14,8 @@
     "ws": "^8.21.0"
   },
   "devDependencies": {
-    "eslint": "^9.34.0",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "globals": "^17.6.0",
