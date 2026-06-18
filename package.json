@@ -25,5 +25,8 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.1.0"
+  },
+  "allowScripts": {
+    "bufferutil@4.1.0": true
   }
 }
