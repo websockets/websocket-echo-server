@@ -21,6 +21,7 @@ const { env } = process;
 const highWaterMark = +env.HIGH_WATER_MARK || 16384;
 
 const wss = new WebSocket.Server({
+  maxFragments: +env.MAX_FRAGMENTS || 256,
   maxPayload: +env.MAX_MESSAGE_SIZE || 64 * 1024,
   server
 });

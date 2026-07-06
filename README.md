@@ -19,6 +19,8 @@ Simple WebSocket echo server.
   the outgoing buffered data of each connection. If the threshold is exceeded no
   more data is read until all the outgoing buffered data is flushed. The default
   value is `16384`.
+- The `MAX_FRAGMENTS` environment variable specifies the maximum number of
+  fragments allowed per message. The default value is `256`.
 - The `MAX_MESSAGE_SIZE` environment variable specifies the maximum allowed
   message size in bytes. The default value is `65536`.
 
