@@ -6,7 +6,7 @@ RUN set -ex && mkdir /home/node/websocket-echo-server
 WORKDIR /home/node/websocket-echo-server
 
 COPY package*.json ./
-RUN set -ex && npm ci --production
+RUN set -ex && npm ci --omit=dev
 
 COPY --chown=node:node . .
 
