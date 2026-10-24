@@ -23,6 +23,9 @@ Simple WebSocket echo server.
   fragments allowed per message. The default value is `256`.
 - The `MAX_MESSAGE_SIZE` environment variable specifies the maximum allowed
   message size in bytes. The default value is `65536`.
+- The `MAX_PINGS_PER_HEARTBEAT` environment variable specifies the maximum
+  number of pings allowed in a heartbeat interval. If the limit is exceeded, the
+  connection is closed. The default value is `60`.
 
 ## Running the server locally
 

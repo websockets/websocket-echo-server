@@ -113,7 +113,63 @@ it('detects and closes unresponsive connections', function (done) {
     };
 
     ws.on('open', function () {
+      pong.call(ws);
+
       ws.on('close', function (code) {
+        assert.strictEqual(code, 1006);
+
+        subprocess.on('close', function (code) {
+          assert.notStrictEqual(code, 0);
+          done();
+        });
+
+        subprocess.kill();
+      });
+    });
+  });
+});
+
+it('closes connections that exceed the ping rate limit', function (done) {
+  const maxPingPerHeartbeat = 10;
+
+  function onPing() {
+    if (++onPing.callCount === 1) {
+      sendPings(this, maxPingPerHeartbeat);
+    } else {
+      sendPings(this, maxPingPerHeartbeat + 1);
+    }
+  }
+
+  onPing.callCount = 0;
+
+  function sendPings(ws, count) {
+    for (let i = 0; i < count; i++) {
+      ws.ping();
+    }
+  }
+
+  const subprocess = fork(path.join(__dirname, 'index.js'), {
+    env: {
+      BIND_PORT: '0',
+      HEARTBEAT_INTERVAL: '100',
+      MAX_PINGS_PER_HEARTBEAT: maxPingPerHeartbeat
+    },
+    stdio: 'pipe'
+  });
+
+  subprocess.stdout.setEncoding('utf8');
+  subprocess.stdout.on('data', function (chunk) {
+    assert.ok(chunk.startsWith('Server listening on'));
+
+    const port = chunk.slice(chunk.lastIndexOf(':') + 1);
+    const ws = new WebSocket(`ws://localhost:${port}`);
+
+    ws.on('open', function () {
+      sendPings(ws, maxPingPerHeartbeat);
+
+      ws.on('ping', onPing);
+      ws.on('close', function (code) {
+        assert.strictEqual(onPing.callCount, 2);
         assert.strictEqual(code, 1006);
 
         subprocess.on('close', function (code) {

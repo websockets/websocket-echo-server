@@ -1,5 +1,6 @@
 'use strict';
 
+const crypto = require('crypto');
 const http = require('http');
 const WebSocket = require('ws');
 
@@ -19,6 +20,10 @@ server.on('request', function request(req, res) {
 
 const { env } = process;
 const highWaterMark = +env.HIGH_WATER_MARK || 16384;
+const maxPingPerHeartbeat = +env.MAX_PINGS_PER_HEARTBEAT || 60;
+const maxRandomInt = 2 ** 32;
+
+let heartbeatRound = 0;
 
 const wss = new WebSocket.Server({
   maxFragments: +env.MAX_FRAGMENTS || 256,
@@ -27,24 +32,27 @@ const wss = new WebSocket.Server({
 });
 
 wss.on('connection', function connection(ws) {
+  ws.heartbeatNonce = crypto.randomInt(maxRandomInt);
+  ws.heartbeatRound = 0;
   ws.isAlive = true;
-  ws.message = 0;
+  ws.messageCount = 0;
+  ws.pingCount = 0;
 
   ws.on('error', console.error);
   ws.on('message', message);
+  ws.on('ping', ping);
   ws.on('pong', heartbeat);
 });
 
 function message(data, binary) {
-  this.isAlive = true;
-  this.message++;
+  this.messageCount++;
   this.send(data, { binary }, (err) => {
     /* istanbul ignore if */
     if (err) {
       return;
     }
 
-    if (--this.message === 0 && this.isPaused) {
+    if (--this.messageCount === 0 && this.isPaused) {
       this.resume();
     }
   });
@@ -57,19 +65,41 @@ function message(data, binary) {
   }
 }
 
-function heartbeat() {
-  this.isAlive = true;
+function ping() {
+  if (this.heartbeatRound !== heartbeatRound) {
+    this.heartbeatRound = heartbeatRound;
+    this.pingCount = 1;
+    return;
+  }
+
+  if (++this.pingCount > maxPingPerHeartbeat) {
+    this.terminate();
+  }
+}
+
+function heartbeat(data) {
+  if (data.length >= 4 && data.readUInt32BE() === this.heartbeatNonce) {
+    this.isAlive = true;
+  }
 }
 
 setInterval(function interval() {
+  heartbeatRound++;
+
   for (const ws of wss.clients) {
     if (ws.isAlive === false) {
       ws.terminate();
       continue;
     }
 
+    const nonce = crypto.randomInt(maxRandomInt);
+    const buf = Buffer.allocUnsafe(4);
+
+    buf.writeUInt32BE(nonce);
+
     ws.isAlive = false;
-    ws.ping();
+    ws.heartbeatNonce = nonce;
+    ws.ping(buf);
   }
 }, +env.HEARTBEAT_INTERVAL || 30000).unref();
 
